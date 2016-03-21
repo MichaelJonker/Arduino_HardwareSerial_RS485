@@ -1,0 +1,13 @@
+{
+  "name": "HardwareSerial_RS485",
+  "keywords": "rs485, serial",
+  "description": "Concurrent multi-drop (i.e. multi-master, multi-slave) RS485 communication library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MichaelJonker/HardwareSerialRS485.git"
+  },
+  "exclude": "extras",
+  "version": "2.2.0",
+  "frameworks": "arduino",
+  "platforms": "atmelavr"
+}
