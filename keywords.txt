@@ -49,7 +49,7 @@ isWriteLocalEcho	KEYWORD2
 isWriteNoLocalEcho	KEYWORD2
 
 
-* Transaction methods ############################################
+# Transaction methods ############################################
 TransactionActive	LITERAL1
 WriteBufferFullTimeout	LITERAL1
 FlushPipelineError	LITERAL1
@@ -61,7 +61,7 @@ endTransaction	KEYWORD2
 isTransactionActive	KEYWORD2
 
 
-* MessageReader methods ############################################
+# MessageReader methods ############################################
 MessageReader 	KEYWORD1
 isMessage	KEYWORD2
 getMessage	KEYWORD2
