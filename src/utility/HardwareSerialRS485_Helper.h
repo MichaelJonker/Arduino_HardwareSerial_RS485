@@ -38,9 +38,9 @@ extern volatile unsigned long timer0_overflow_count; // ticks every 64*256 cycle
 DDR<R>  = mask; // activate pins for output:
 PORT<R> = mask; // Sets output values, note: setting a disabled output high will enable the internal pull-up register.
 where <R> is
-D – digital pins  7 to 0 (bank D)
-B – digital pins 13 to 8 (bank B)
-C – analogue pins 5 to 0 (bank C)
+D â€“ digital pins  7 to 0 (bank D)
+B â€“ digital pins 13 to 8 (bank B)
+C â€“ analogue pins 5 to 0 (bank C)
 */
 
 /* TRxControl class doc
@@ -78,15 +78,14 @@ private:
 #pragma push_macro("_MMIO_BYTE")  // was _MMIO_BYTE(mem_addr) (*(volatile uint8_t *)(mem_addr))
 #undef  _MMIO_BYTE
 #define _MMIO_BYTE
-#define Atmega328p_Ports(__p) __p == 'B' ? PORTB : __p == 'C' ? PORTC : __p == 'D' ? PORTD :
-#ifdef USBCON
-  #define Atmega348u_Ports(__p) __p == 'E' ? PORTE : __p == 'E' ? PORTF :
-#else
-  #define Atmega348u_Ports(__p)
-#endif
+// ATEHXX: added other possible ports (now matches also ArduinoMega)
+#define PortsABCD(__p) __p == 'A' ? PORTA : __p == 'B' ? PORTB : __p == 'C' ? PORTC : __p == 'D' ? PORTD :
+#define PortsEFGH(__p) __p == 'E' ? PORTE : __p == 'F' ? PORTF : __p == 'G' ? PORTG : __p == 'H' ? PORTH :
+#define PortsJKL(__p) __p == 'J' ? PORTJ : __p == 'K' ? PORTK : __p == 'L' ? PORTL :
 //TODO try a cleanup with a consexpr function, i.e. a function that is evaluatd at compile time.
-  const static unsigned char TRx_PORT = (Atmega328p_Ports(T__TRx_PORT) Atmega348u_Ports(T__TRx_PORT) PORTB); 
-  const static unsigned char DDR      = (DDRB-PORTB) + TRx_PORT; // this works because DDR registers are always located at a fixed offset to the PORT registers
+// ATEHXX: Changed to uint16_t to allow all ports of Arduino Mega (e.g. PORTH)
+const static uint16_t TRx_PORT = (PortsABCD(T__TRx_PORT) PortsEFGH(T__TRx_PORT) PortsJKL(T__TRx_PORT) PORTB);
+const static uint16_t DDR      = (DDRB-PORTB) + TRx_PORT; // this works because DDR registers are always located at a fixed offset to the PORT registers
 #pragma pop_macro("_MMIO_BYTE")
 
 
@@ -317,7 +316,7 @@ state transitions for txState
 user transitions
   ()              *->0x00
   begin()           
-  txReady()	 test if txState € {0x10, 0x11, 0x12, 0x13 or 0x*0}
+  txReady()	 test if txState â‚¬ {0x10, 0x11, 0x12, 0x13 or 0x*0}
   - write()
   setTxMode()
 
@@ -457,7 +456,7 @@ public:
 
     if(false) { /* lekker puh */ }
     else if(  txState         == 0x00)  { /* nothing */ } // we are waiting (or not) for Rx idle and [sigh] we just received another byte
-    else if( (txState | 0x01) == 0x13)  // txState € {0x12, 0x13} we are expecting data echoed back
+    else if( (txState | 0x01) == 0x13)  // txState â‚¬ {0x12, 0x13} we are expecting data echoed back
     {
       if(error)                     txState|=0x0c; // frame error, mark the state               // fix txState+=0x0c;
       else if(inHwShiftRegister!=c) txState|=0x08; // not the data we expected, mark the state  // fix txState+=0x0a;
